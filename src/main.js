@@ -14,6 +14,7 @@ import cluster from 'cluster'
 import { cpus } from 'os'
 const numCPUs = cpus().length;
 import compression from 'compression'
+import {logger} from './logger/index.js'
 
 const app = express()
 const httpServer = new HttpServer(app)
@@ -50,6 +51,7 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 
+
 //------------------------PASSPORT----------------------------------//
 import passport from 'passport'
 import  { Strategy as LocalStrategy } from 'passport-local'
@@ -79,9 +81,13 @@ let subtitleLogin
 let ruta = 'login'
 let error
 
-
+app.use((req, res, next) => {
+    const {url, method} = req
+    logger.info(`Ruta recibida: ${url} - con metodo: ${method}`)
+    next()
+})
+npm
 app.get('/info', (req, res) => {
-
     res.send(`Estas en el puerto ${port}`)
 })
 
@@ -89,8 +95,6 @@ app.get('/infozip' , compression() , (req, res) => {
 
     res.send(`Estas en el puerto ${port}`)
 })
-
-
 
 app.use('/api/randoms', noBloqueante)
 
@@ -153,6 +157,11 @@ app.get('/error' ,  (req, res) => {
         error: error,
         ruta: ruta
     })
+})
+
+app.get('*', (req, res) => {
+    res.send(`Ruta: ${req.method} ${req.url} no esta implementada`)
+    logger.warn(`Ruta: ${req.method} ${req.url} no esta implementada`)
 })
 
 
