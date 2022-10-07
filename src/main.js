@@ -86,8 +86,17 @@ app.use((req, res, next) => {
     logger.info(`Ruta recibida: ${url} - con metodo: ${method}`)
     next()
 })
-npm
 app.get('/info', (req, res) => {
+    const processInfo = {
+        platform: process.platform,
+        version: process.version,
+        title: process.title,
+        execPath: process.execPath,
+        processId: process.pid,
+        rss: process.memoryUsage().rss,
+        numberOfProcessors: numCPUs
+    };
+    //console.log(processInfo);
     res.send(`Estas en el puerto ${port}`)
 })
 
@@ -189,6 +198,7 @@ io.on('connection', async (socket) => {
     socket.on('newProduct', async (newProduct) => {
         await productosDao.guardar(newProduct)
         console.log(newProduct)
+        logger.error('Error ficticio')
         io.sockets.emit('products', await productosDao.listarAll())
     })
 
